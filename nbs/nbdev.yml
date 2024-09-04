@@ -2,8 +2,8 @@ project:
   output-dir: _docs
 
 website:
-  title: "Proyecto Datos"
-  site-url: "https://g.diaz14.github.io/Proyecto Datos"
+  title: "Gustavo"
+  site-url: "https://g.diaz14.github.io/Gustavo"
   description: "Paginas"
   repo-branch: main
-  repo-url: "https://github.com/g.diaz14/Proyecto Datos"
+  repo-url: "https://github.com/g.diaz14/Gustavo"

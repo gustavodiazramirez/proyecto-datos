@@ -1,0 +1,58 @@
+---
+title: "Modelo Básico Proyecto"
+format: html
+---
+
+<div id="p5-sketch">
+  <div id="canvas-container"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+<script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
+
+<script>
+(function() {
+  const sketch = (p) => {
+    let video;
+    let classifier;
+    let modelLoaded = 'https://teachablemachine.withgoogle.com/models/iRKXr61T1/';
+    let label = 'esperando...';
+
+    p.preload = function() {
+      classifier = ml5.imageClassifier(modelLoaded);
+    }
+
+    p.setup = function() {
+      p.createCanvas(640, 640).parent('canvas-container');
+      video = p.createCapture(p.VIDEO);
+      video.hide();
+      classifyVideo();
+    }
+
+    function classifyVideo() {
+      classifier.classify(video, gotResults);
+    }
+
+    function gotResults(error, results) {
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      label = results[0].label;
+      classifyVideo();
+    }
+
+    p.draw = function() {
+      p.background(0);
+      p.image(video, 0, 0);
+      p.textSize(30);
+      p.textAlign(p.CENTER, p.CENTER);
+      p.fill(255);
+      p.text(label, p.width / 2, p.height - 100);
+    }
+  };
+
+  new p5(sketch);
+})();
+</script>

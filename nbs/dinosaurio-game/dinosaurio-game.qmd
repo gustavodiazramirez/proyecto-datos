@@ -1,4 +1,9 @@
 <!-- Markdown cell in nbdev notebook -->
+---
+title: "Juego Dinosaurio"
+format: html
+---
+
 <div id="p5-sketch">
   <div id="canvas-container"></div>
 </div>
