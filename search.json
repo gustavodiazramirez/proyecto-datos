@@ -1,0 +1,24 @@
+[
+  {
+    "objectID": "idea-proyecto/idea.html#ventajas.",
+    "href": "idea-proyecto/idea.html#ventajas.",
+    "title": "Idea Proyecto Datos",
+    "section": "Ventajas.",
+    "text": "Ventajas.\n\nAutomatización:Reducción de la necesidad de supervisión manual constante.\nEficiencia:Detección rápida y precisa del incumplimiento de normas de seguridad.\nPrevención:Mejora de la prevención de riesgos mediante el monitoreo continuo y la generación de alertas.",
+    "crumbs": [
+      "idea-proyecto",
+      "Idea Proyecto Datos"
+    ]
+  },
+  {
+    "objectID": "dinosaurio-game/codigo-dinosario-game.html",
+    "href": "dinosaurio-game/codigo-dinosario-game.html",
+    "title": "Juego del Dinosaurio con Clasificador de Video",
+    "section": "",
+    "text": "Esta aplicación combina un juego de dinosaurio con un modelo de aprendizaje automático para clasificar el video capturado desde la cámara del usuario. El modelo, cargado desde Teachable Machine, determina si la escena capturada muestra una “Mano” y hace que el dinosaurio en el juego salte si la mano está detectada con alta confianza. La interfaz se actualiza en tiempo real, proporcionando una experiencia interactiva donde el jugador debe evitar obstáculos y el clasificador de video ayuda a controlar el salto del dinosaurio.\n\n1. Definición de Variables\n\nlet dino;: Variable para el sprite del dinosaurio en el juego.\nlet cactus;: Variable para el sprite del cactus (obstáculo).\nlet gravedad = 1.4;: Valor de gravedad que afecta el salto del dinosaurio.\nlet salto = -15;: Velocidad de salto del dinosaurio.\nlet estaSaltando = false;: Indica si el dinosaurio está en el aire.\nlet cactusX;: Posición horizontal del cactus.\nlet juegoTerminado = false;: Controla el estado del juego (si está terminado o no).\nlet nivelDelSuelo;: Posición vertical del suelo en el lienzo.\nlet velocidad = 10;: Velocidad a la que se mueve el cactus.\nlet puntaje = 0;: Puntuación del jugador, que aumenta al superar obstáculos.\nlet modeloCargado = \"https://teachablemachine.withgoogle.com/models/sMD9JFV58/\";: URL del modelo de aprendizaje automático para clasificación de video.\nlet label = \"Cargando modelo...\";: Etiqueta que indica el resultado de la clasificación.\nlet clasificador;: El clasificador de imágenes que analiza el video.\nlet confianza = 0;: Nivel de confianza de la clasificación.\nlet video;: Variable para la captura de video en vivo.\n\n\n\n2. Cargar el Modelo\nfunction preload() {\n  clasificador = ml5.imageClassifier(modeloCargado);\n}\n\n\n3. Configurar el Entorno\nfunction setup() {\n  createCanvas(1000, 500); // Crea un lienzo de 1000x500 píxeles\n  nivelDelSuelo = height - 25; // Define el nivel del suelo\n  reiniciarJuego(); // Inicializa el juego\n  video = createCapture(VIDEO);\n  video.size(200, 200); // Tamaño del video\n  video.hide(); // Oculta el video original\n  clasificarVideo(); // Inicia la clasificación del video\n}\n\n\n4. Clasificar el Video\nfunction clasificarVideo() {\n  clasificador.classify(video, obtenerResultados);\n}\n\n\n5. Obtener los Resultados\nfunction obtenerResultados(error, resultados) {\n  if (error) {\n    console.error(error);\n    return;\n  }\n  label = resultados[0].label;\n  confianza = resultados[0].confidence;\n}\n\n\n6. Actualizar y Dibujar el Lienzo\nfunction draw() {\n  background(220);\n\n  if (!juegoTerminado) {\n    dibujarCactus();\n    dibujarDino();\n    verificarColisiones();\n    moverCactus();\n    actualizarPuntaje();\n\n    // Controlar el salto con la detección de la mano\n    if (label == \"Mano\" && confianza &gt; 0.8) {\n      dino.velocityY = salto;\n      estaSaltando = true;\n    }\n\n    // Aplicar gravedad\n    dino.velocityY += gravedad;\n    dino.position.y = constrain(dino.position.y, nivelDelSuelo - dino.height, nivelDelSuelo);\n  } else {\n    // Mostrar mensaje de juego terminado\n    textSize(50);\n    textAlign(CENTER, CENTER);\n    fill(255, 0, 0);\n    text(\"Juego Terminado\", width / 2, height / 2);\n  }\n}\n\n\n7. Reiniciar el Juego\nfunction reiniciarJuego() {\n  // Configuración inicial del juego\n  dino = createSprite(50, nivelDelSuelo, 50, 50); // Crea el dinosaurio\n  cactusX = width; // Posición inicial del cactus\n  puntaje = 0; // Reinicia el puntaje\n  juegoTerminado = false; // Reinicia el estado del juego\n}",
+    "crumbs": [
+      "dinosaurio-game",
+      "Juego del Dinosaurio con Clasificador de Video"
+    ]
+  }
+]
