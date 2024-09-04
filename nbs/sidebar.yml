@@ -1,0 +1,12 @@
+website:
+  sidebar:
+    contents:
+      - index.qmd
+      - section: dinosaurio-game
+        contents:
+          - dinosaurio-game\codigo-dinosario-game.qmd
+          - dinosaurio-game\dinosaurio-game.qmd
+      - section: idea-proyecto
+        contents:
+          - idea-proyecto\idea.qmd
+          - idea-proyecto\proyecto-v01.qmd

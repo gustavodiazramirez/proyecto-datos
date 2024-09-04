@@ -1,0 +1,21 @@
+---
+title: "Idea Proyecto Datos"
+format: html
+---
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/p5.play/lib/p5.play.min.js"></script>
+<script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
+
+<img src="./resources/idea.jpeg" alt="Settings button" title="Settings button" width="300" />
+
+### Idea para un Modelo de Clasificación de Imágenes para la Seguridad en el Trabajo
+
+- **`Problema:`**En el sector de la construcción y en otros trabajos de alto riesgo, la seguridad de los trabajadores es primordial. Uno de los principales problemas es garantizar que todos los trabajadores cumplan con las normas de seguridad, como el uso de chalecos reflectantes y cascos de protección. Sin embargo, en entornos dinámicos y con gran cantidad de personal, supervisar de manera efectiva el cumplimiento de estas normativas puede ser un reto. La falta de cumplimiento puede resultar en accidentes graves, exponiendo a los trabajadores a peligros innecesarios.
+- **`Solución:`**Proponemos desarrollar un modelo de clasificación de imágenes entrenado para identificar automáticamente el uso correcto de equipo de protección personal (EPP) en sitios de construcción y otros ambientes laborales de alto riesgo. Este modelo, basado en tecnologías de visión por computadora, utilizará imágenes captadas por cámaras instaladas en el lugar de trabajo para detectar si los trabajadores están usando chalecos reflectantes y cascos de protección.
+El modelo evaluará imágenes en tiempo real, clasificando a las personas en función de su conformidad con las normas de seguridad (por ejemplo, usando un chaleco reflectante y un casco) y generando alertas en caso de incumplimiento. Esto permitirá a los supervisores actuar de manera inmediata, reduciendo la probabilidad de accidentes y mejorando la seguridad en el lugar de trabajo.
+
+## Ventajas.
+
+- **`Automatización:`**Reducción de la necesidad de supervisión manual constante.
+- **`Eficiencia:`**Detección rápida y precisa del incumplimiento de normas de seguridad.
+- **`Prevención:`**Mejora de la prevención de riesgos mediante el monitoreo continuo y la generación de alertas.

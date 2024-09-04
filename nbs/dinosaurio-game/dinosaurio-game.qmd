@@ -1,0 +1,153 @@
+<!-- Markdown cell in nbdev notebook -->
+<div id="p5-sketch">
+  <div id="canvas-container"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/p5.play/lib/p5.play.min.js"></script>
+<script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
+
+<script>
+(function() {
+  const sketch = (p) => {
+    let dino;
+    let cactus;
+    let gravedad = 1.4;
+    let salto = -15;
+    let estaSaltando = false;
+    let cactusX;
+    let juegoTerminado = false;
+    let nivelDelSuelo;
+    let velocidad = 10;
+    let puntaje = 0;
+    let modeloCargado = "https://teachablemachine.withgoogle.com/models/sMD9JFV58/";
+    let label = "Cargando modelo...";
+    let clasificador;
+    let confianza = 0;
+    let video;
+
+    p.preload = function() {
+      clasificador = ml5.imageClassifier(modeloCargado);
+    }
+
+    p.setup = function() {
+      p.createCanvas(1000, 500).parent('canvas-container');  // Crea un canvas que ocupe toda la pantalla
+      nivelDelSuelo = p.height - 25;  // Define el nivel del suelo
+      reiniciarJuego();  // Inicializa el juego
+      video = p.createCapture(p.VIDEO);
+      video.size(200, 200);  // Tamaño del video
+      video.hide();  // Oculta el video original
+      clasificarVideo();
+    }
+
+    function clasificarVideo(){
+      clasificador.classify(video, function(error, resultado){
+        if(error){
+          console.error(error);
+          return;
+        }
+        label = resultado[0].label;
+        confianza = resultado[0].confidence * 100;
+        console.log(label + " " + confianza + "%");
+        clasificarVideo();
+      });
+    }
+
+    function reiniciarJuego() {
+      juegoTerminado = false;
+      cactusX = p.width;
+      velocidad = 10;  // Reinicia la velocidad inicial
+      puntaje = 0;  // Reinicia el puntaje
+      dino = p.createSprite(50, nivelDelSuelo, 50, 50);  // Crea el dinosaurio (cuadrado blanco)
+      dino.shapeColor = p.color(255);  // Color blanco
+      cactus = p.createSprite(cactusX, nivelDelSuelo, 40, 80);  // Crea el cactus (obstáculo)
+      cactus.shapeColor = p.color(255);  // Color blanco
+      dino.velocity.y = 0;  // Resetea la velocidad del dino
+    }
+
+    p.draw = function() {
+      p.background(0);  // Fondo negro
+
+      if (!juegoTerminado) {
+        // Lógica de gravedad y salto del dinosaurio
+        if (estaSaltando) {
+          dino.velocity.y += gravedad;  // Aplica gravedad
+          dino.position.y += dino.velocity.y;  // Actualiza la posición del dino
+
+          if (dino.position.y >= nivelDelSuelo) {  // Dino toca el suelo
+            dino.position.y = nivelDelSuelo;
+            estaSaltando = false;  // Detiene el salto
+            dino.velocity.y = 0;  // Detiene la velocidad vertical al tocar el suelo
+          }
+        }
+
+        // Mueve el cactus
+        cactus.position.x -= velocidad;
+
+        // Si el cactus sale de la pantalla, lo resetea
+        if (cactus.position.x < 0) {
+          cactus.position.x = p.width;
+          puntaje += 1;  // Incrementa el puntaje al superar un obstáculo
+          velocidad += 1;  // Aumenta la velocidad
+        }
+
+        // Verifica si el dinosaurio choca con el cactus
+        if (dino.overlap(cactus)) {
+          juegoTerminado = true;  // Si hay colisión, termina el juego
+          dino.remove();  // Elimina el dino para evitar que quede pegado
+          cactus.remove();  // Elimina el cactus
+        }
+
+        // Muestra el puntaje en la pantalla
+        p.fill(255);
+        p.textSize(15);
+        p.textAlign(p.LEFT, p.TOP);
+        p.text("PUNTAJE: " + puntaje, 20, 20);
+
+        // Si el modelo clasificador detecta "Mano" con confianza mayor al 80%, el dinosaurio salta
+        if (label === "Mano" && confianza > 99.99999 && !estaSaltando && !juegoTerminado) {
+          dino.velocity.y = salto;  // Aplica velocidad de salto
+          estaSaltando = true;  // Indica que el dino está saltando
+        }
+
+        // Mostrar el video en la esquina superior derecha
+        p.image(video, p.width - 115, 10, 100, 100);
+      } else {
+        p.textAlign(p.CENTER, p.CENTER);
+        p.textSize(32);
+        p.fill(255);
+        p.text("Juego Terminado", p.width / 2, p.height / 2);  // Muestra el mensaje de Juego Terminado
+        p.textSize(20);
+        p.text("Presiona 'R' para reiniciar", p.width / 2, p.height / 2 + 40);
+        p.text("Has saltado " + puntaje + " obstáculos", p.width / 2, p.height / 2 + 80);
+      }
+
+      // Dibuja al dino y al cactus
+      p.drawSprites();
+    }
+
+    // Detecta la tecla de reinicio
+    p.keyPressed = function() {
+      if (p.key === 'r' || p.key === 'R') {  // Reinicia el juego con la tecla 'R'
+        reiniciarJuego();
+      }
+    }
+
+    // Redimensionar el canvas cuando se cambia el tamaño de la ventana
+    p.windowResized = function() {
+      p.resizeCanvas(p.windowWidth, p.windowHeight);
+      nivelDelSuelo = p.height - 100;  // Recalcula el nivel del suelo
+      if (!juegoTerminado) {
+        if (dino) {
+          dino.position.y = nivelDelSuelo;  // Ajusta la posición del dino
+        }
+        if (cactus) {
+          cactus.position.y = nivelDelSuelo;  // Ajusta la posición del cactus
+        }
+      }
+    }
+  };
+
+  new p5(sketch);
+})();
+</script>

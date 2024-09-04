@@ -1,0 +1,119 @@
+---
+title: "Juego del Dinosaurio con Clasificador de Video"
+format:
+  html:
+    css: clasificador.css
+    code-overflow: scroll
+
+toc: true
+toc-location: right
+toc-depth: 2
+---
+
+Esta aplicación combina un juego de dinosaurio con un modelo de aprendizaje automático para clasificar el video capturado desde la cámara del usuario. El modelo, cargado desde Teachable Machine, determina si la escena capturada muestra una "Mano" y hace que el dinosaurio en el juego salte si la mano está detectada con alta confianza. La interfaz se actualiza en tiempo real, proporcionando una experiencia interactiva donde el jugador debe evitar obstáculos y el clasificador de video ayuda a controlar el salto del dinosaurio.
+
+### 1. Definición de Variables
+
+- **`let dino;`**: Variable para el sprite del dinosaurio en el juego.
+- **`let cactus;`**: Variable para el sprite del cactus (obstáculo).
+- **`let gravedad = 1.4;`**: Valor de gravedad que afecta el salto del dinosaurio.
+- **`let salto = -15;`**: Velocidad de salto del dinosaurio.
+- **`let estaSaltando = false;`**: Indica si el dinosaurio está en el aire.
+- **`let cactusX;`**: Posición horizontal del cactus.
+- **`let juegoTerminado = false;`**: Controla el estado del juego (si está terminado o no).
+- **`let nivelDelSuelo;`**: Posición vertical del suelo en el lienzo.
+- **`let velocidad = 10;`**: Velocidad a la que se mueve el cactus.
+- **`let puntaje = 0;`**: Puntuación del jugador, que aumenta al superar obstáculos.
+- **`let modeloCargado = "https://teachablemachine.withgoogle.com/models/sMD9JFV58/";`**: URL del modelo de aprendizaje automático para clasificación de video.
+- **`let label = "Cargando modelo...";`**: Etiqueta que indica el resultado de la clasificación.
+- **`let clasificador;`**: El clasificador de imágenes que analiza el video.
+- **`let confianza = 0;`**: Nivel de confianza de la clasificación.
+- **`let video;`**: Variable para la captura de video en vivo.
+
+
+### 2. Cargar el Modelo
+
+```javascript
+function preload() {
+  clasificador = ml5.imageClassifier(modeloCargado);
+}
+```
+
+### 3. Configurar el Entorno
+
+```javascript
+function setup() {
+  createCanvas(1000, 500); // Crea un lienzo de 1000x500 píxeles
+  nivelDelSuelo = height - 25; // Define el nivel del suelo
+  reiniciarJuego(); // Inicializa el juego
+  video = createCapture(VIDEO);
+  video.size(200, 200); // Tamaño del video
+  video.hide(); // Oculta el video original
+  clasificarVideo(); // Inicia la clasificación del video
+}
+```
+
+### 4. Clasificar el Video
+
+```javascript
+function clasificarVideo() {
+  clasificador.classify(video, obtenerResultados);
+}
+```
+
+### 5. Obtener los Resultados
+
+```javascript
+function obtenerResultados(error, resultados) {
+  if (error) {
+    console.error(error);
+    return;
+  }
+  label = resultados[0].label;
+  confianza = resultados[0].confidence;
+}
+```
+
+### 6. Actualizar y Dibujar el Lienzo
+
+```javascript
+function draw() {
+  background(220);
+
+  if (!juegoTerminado) {
+    dibujarCactus();
+    dibujarDino();
+    verificarColisiones();
+    moverCactus();
+    actualizarPuntaje();
+
+    // Controlar el salto con la detección de la mano
+    if (label == "Mano" && confianza > 0.8) {
+      dino.velocityY = salto;
+      estaSaltando = true;
+    }
+
+    // Aplicar gravedad
+    dino.velocityY += gravedad;
+    dino.position.y = constrain(dino.position.y, nivelDelSuelo - dino.height, nivelDelSuelo);
+  } else {
+    // Mostrar mensaje de juego terminado
+    textSize(50);
+    textAlign(CENTER, CENTER);
+    fill(255, 0, 0);
+    text("Juego Terminado", width / 2, height / 2);
+  }
+}
+```
+
+### 7. Reiniciar el Juego
+
+```javascript
+function reiniciarJuego() {
+  // Configuración inicial del juego
+  dino = createSprite(50, nivelDelSuelo, 50, 50); // Crea el dinosaurio
+  cactusX = width; // Posición inicial del cactus
+  puntaje = 0; // Reinicia el puntaje
+  juegoTerminado = false; // Reinicia el estado del juego
+}
+```
